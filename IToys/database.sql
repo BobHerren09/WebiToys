@@ -94,7 +94,4 @@ CREATE TABLE IF NOT EXISTS banner (
   ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Thêm quản trị viên mặc định
-INSERT INTO quan_tri_vien (ten_dang_nhap, mat_khau, ho_ten, email, quyen_han) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản trị viên', 'admin@example.com', 'admin');
 
