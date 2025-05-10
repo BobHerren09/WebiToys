@@ -284,8 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="hinh_anh">Hình ảnh chính</label>
                 <input type="file" id="hinh_anh" name="hinh_anh" accept="image/*">
                 <small>Để trống nếu không muốn thay đổi hình ảnh</small>
-                <div id="preview-container" class="preview-container">
-                    <img id="preview-image" src="../uploads  class="preview-container">
+                <div id="preview-container" class="preview-container">                 
                     <img id="preview-image" src="../uploads/<?php echo $san_pham['hinh_anh']; ?>" alt="<?php echo $san_pham['ten_san_pham']; ?>">
                 </div>
             </div>
@@ -640,4 +639,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </script>
-

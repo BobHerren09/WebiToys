@@ -1,8 +1,28 @@
 <?php
 // Kiem tra quyen truy cap
 if (!isset($_SESSION['admin_id'])) {
-  header("Location: dang-nhap.php");
-  exit();
+    header("Location: dang-nhap.php");
+    exit();
+}
+
+// Xử lý POST form cập nhật trạng thái
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['don_hang_id']) && isset($_POST['trang_thai'])) {
+    $don_hang_id = (int) $_POST['don_hang_id'];
+    $trang_thai_moi = (int) $_POST['trang_thai'];
+    $trang_thai_cu = (int) $_POST['trang_thai_cu'];
+
+    // Cập nhật trạng thái đơn hàng
+    $sql = "UPDATE don_hang SET trang_thai = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $trang_thai_moi, $don_hang_id);
+
+    if ($stmt->execute()) {
+        // Cập nhật số lượng sản phẩm
+        cap_nhat_so_luong_san_pham($conn, $don_hang_id, $trang_thai_moi, $trang_thai_cu);
+        $thong_bao = "Cập nhật trạng thái đơn hàng thành công!";
+    } else {
+        $loi = "Có lỗi xảy ra khi cập nhật trạng thái đơn hàng!";
+    }
 }
 
 // Xu ly hanh dong
@@ -10,21 +30,31 @@ $hanh_dong = isset($_GET['hanh-dong']) ? $_GET['hanh-dong'] : '';
 $thong_bao = '';
 $loi = '';
 
+
 // Xu ly cap nhat trang thai don hang
 if ($hanh_dong == 'cap-nhat-trang-thai' && isset($_GET['id']) && isset($_GET['trang-thai'])) {
-  $don_hang_id = (int)$_GET['id'];
-  $trang_thai = (int)$_GET['trang-thai'];
-  
-  // Kiem tra don hang ton tai
-  $sql = "SELECT * FROM don_hang WHERE id = ?";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $don_hang_id);
-  $stmt->execute();
-  $result = $stmt->get_result();
+    $don_hang_id = (int) $_GET['id'];
+    $trang_thai = (int) $_GET['trang-thai'];
+
+    // Kiem tra don hang ton tai
+    $sql = "SELECT * FROM don_hang WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $don_hang_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
+        $don_hang = $result->fetch_assoc();
+        $trang_thai_cu = $don_hang['trang_thai'];
+
         // Cap nhat trang thai don hang
-        if (cap_nhat_trang_thai_don_hang($conn, $don_hang_id, $trang_thai)) {
+        $sql = "UPDATE don_hang SET trang_thai = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $trang_thai, $don_hang_id);
+
+        if ($stmt->execute()) {
+            // Cập nhật số lượng sản phẩm
+            cap_nhat_so_luong_san_pham($conn, $don_hang_id, $trang_thai, $trang_thai_cu);
             $thong_bao = "Cập nhật trạng thái đơn hàng thành công!";
         } else {
             $loi = "Có lỗi xảy ra khi cập nhật trạng thái đơn hàng!";
@@ -36,41 +66,41 @@ if ($hanh_dong == 'cap-nhat-trang-thai' && isset($_GET['id']) && isset($_GET['tr
 
 // Xu ly xoa don hang
 if ($hanh_dong == 'xoa' && isset($_GET['id'])) {
-  $don_hang_id = (int)$_GET['id'];
-  
-  // Kiem tra don hang ton tai
-  $sql = "SELECT * FROM don_hang WHERE id = ?";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $don_hang_id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  
-  if ($result->num_rows > 0) {
-      // Xoa chi tiet don hang
-      $sql = "DELETE FROM chi_tiet_don_hang WHERE don_hang_id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("i", $don_hang_id);
-      $stmt->execute();
-      
-      // Xoa don hang
-      $sql = "DELETE FROM don_hang WHERE id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("i", $don_hang_id);
-      
-      if ($stmt->execute()) {
-          $thong_bao = "Xóa đơn hàng thành công!";
-      } else {
-          $loi = "Có lỗi xảy ra khi xóa đơn hàng!";
-      }
-  } else {
-      $loi = "Đơn hàng không tồn tại!";
-  }
+    $don_hang_id = (int) $_GET['id'];
+
+    // Kiem tra don hang ton tai
+    $sql = "SELECT * FROM don_hang WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $don_hang_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Xoa chi tiet don hang
+        $sql = "DELETE FROM chi_tiet_don_hang WHERE don_hang_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $don_hang_id);
+        $stmt->execute();
+
+        // Xoa don hang
+        $sql = "DELETE FROM don_hang WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $don_hang_id);
+
+        if ($stmt->execute()) {
+            $thong_bao = "Xóa đơn hàng thành công!";
+        } else {
+            $loi = "Có lỗi xảy ra khi xóa đơn hàng!";
+        }
+    } else {
+        $loi = "Đơn hàng không tồn tại!";
+    }
 }
 
 // Xu ly loc va tim kiem
 $tu_khoa = isset($_GET['tu_khoa']) ? $_GET['tu_khoa'] : '';
-$trang_thai_loc = isset($_GET['trang-thai']) ? (int)$_GET['trang-thai'] : -1;
-$trang = isset($_GET['trang']) ? (int)$_GET['trang'] : 1;
+$trang_thai_loc = isset($_GET['trang-thai']) ? (int) $_GET['trang-thai'] : -1;
+$trang = isset($_GET['trang']) ? (int) $_GET['trang'] : 1;
 $gioi_han = 10;
 
 // Tao cau truy van
@@ -79,23 +109,23 @@ $params = array();
 $types = '';
 
 if (!empty($tu_khoa)) {
-  $dieu_kien[] = "(ho_ten LIKE ? OR email LIKE ? OR dien_thoai LIKE ?)";
-  $tu_khoa_search = "%$tu_khoa%";
-  $params[] = $tu_khoa_search;
-  $params[] = $tu_khoa_search;
-  $params[] = $tu_khoa_search;
-  $types .= 'sss';
+    $dieu_kien[] = "(ho_ten LIKE ? OR email LIKE ? OR dien_thoai LIKE ?)";
+    $tu_khoa_search = "%$tu_khoa%";
+    $params[] = $tu_khoa_search;
+    $params[] = $tu_khoa_search;
+    $params[] = $tu_khoa_search;
+    $types .= 'sss';
 }
 
 if ($trang_thai_loc >= 0) {
-  $dieu_kien[] = "trang_thai = ?";
-  $params[] = $trang_thai_loc;
-  $types .= 'i';
+    $dieu_kien[] = "trang_thai = ?";
+    $params[] = $trang_thai_loc;
+    $types .= 'i';
 }
 
 $where = '';
 if (!empty($dieu_kien)) {
-  $where = "WHERE " . implode(' AND ', $dieu_kien);
+    $where = "WHERE " . implode(' AND ', $dieu_kien);
 }
 
 // Dem tong so don hang
@@ -103,7 +133,7 @@ $sql_count = "SELECT COUNT(*) as total FROM don_hang $where";
 $stmt_count = $conn->prepare($sql_count);
 
 if (!empty($params)) {
-  $stmt_count->bind_param($types, ...$params);
+    $stmt_count->bind_param($types, ...$params);
 }
 
 $stmt_count->execute();
@@ -129,30 +159,30 @@ $stmt->execute();
 $result = $stmt->get_result();
 $don_hang_list = array();
 while ($row = $result->fetch_assoc()) {
-  $don_hang_list[] = $row;
+    $don_hang_list[] = $row;
 }
 
 // Lay chi tiet don hang
 $chi_tiet_don_hang = null;
 if ($hanh_dong == 'xem' && isset($_GET['id'])) {
-  $don_hang_id = (int)$_GET['id'];
-  
-  // Lay thong tin don hang
-  $sql = "SELECT * FROM don_hang WHERE id = ?";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $don_hang_id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  
-  if ($result->num_rows > 0) {
-      $chi_tiet_don_hang = $result->fetch_assoc();
-      
-      // Lay chi tiet san pham trong don hang
-      $chi_tiet_don_hang['san_pham'] = lay_chi_tiet_don_hang($conn, $don_hang_id);
-  } else {
-      $loi = "Đơn hàng không tồn tại!";
-      $hanh_dong = '';
-  }
+    $don_hang_id = (int) $_GET['id'];
+
+    // Lay thong tin don hang
+    $sql = "SELECT * FROM don_hang WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $don_hang_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $chi_tiet_don_hang = $result->fetch_assoc();
+
+        // Lay chi tiet san pham trong don hang
+        $chi_tiet_don_hang['san_pham'] = lay_chi_tiet_don_hang($conn, $don_hang_id);
+    } else {
+        $loi = "Đơn hàng không tồn tại!";
+        $hanh_dong = '';
+    }
 }
 ?>
 
@@ -194,7 +224,9 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
                       <tr>
                           <th>Trạng thái:</th>
                           <td>
-                              <form method="POST" action="index.php?trang=don-hang&hanh-dong=cap-nhat-trang-thai&id=<?php echo $chi_tiet_don_hang['id']; ?>" class="form-trang-thai">
+                              <form method="POST" action="" class="form-trang-thai">
+                                  <input type="hidden" name="don_hang_id" value="<?php echo $chi_tiet_don_hang['id']; ?>">
+                                  <input type="hidden" name="trang_thai_cu" value="<?php echo $chi_tiet_don_hang['trang_thai']; ?>">
                                   <select name="trang_thai" id="trang_thai" onchange="this.form.submit()">
                                       <option value="0" <?php echo $chi_tiet_don_hang['trang_thai'] == 0 ? 'selected' : ''; ?>>Mới</option>
                                       <option value="1" <?php echo $chi_tiet_don_hang['trang_thai'] == 1 ? 'selected' : ''; ?>>Đang xử lý</option>
@@ -332,7 +364,7 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
                           // Xác định trạng thái đơn hàng
                           $trang_thai_text = '';
                           $trang_thai_class = '';
-                          
+
                           switch ($don_hang['trang_thai']) {
                               case 0:
                                   $trang_thai_text = 'Mới';
@@ -393,16 +425,16 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
               if ($trang_thai_loc >= 0) {
                   $url_co_so .= "&trang-thai=$trang_thai_loc";
               }
-              
+
               // Nut trang truoc
               if ($trang > 1) {
                   echo '<a href="' . $url_co_so . '&trang=' . ($trang - 1) . '" class="trang-truoc">Trước</a>';
               }
-              
+
               // Cac trang
               $bat_dau = max(1, $trang - 2);
               $ket_thuc = min($tong_so_trang, $trang + 2);
-              
+
               for ($i = $bat_dau; $i <= $ket_thuc; $i++) {
                   if ($i == $trang) {
                       echo '<span class="trang-hien-tai">' . $i . '</span>';
@@ -410,7 +442,7 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
                       echo '<a href="' . $url_co_so . '&trang=' . $i . '">' . $i . '</a>';
                   }
               }
-              
+
               // Nut trang sau
               if ($trang < $tong_so_trang) {
                   echo '<a href="' . $url_co_so . '&trang=' . ($trang + 1) . '" class="trang-sau">Sau</a>';
@@ -420,4 +452,3 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
       <?php endif; ?>
   <?php endif; ?>
 </div>
-

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Kiem tra quyen truy cap
 if (!isset($_SESSION['admin_id'])) {
     header("Location: dang-nhap.php");
@@ -348,4 +348,3 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-

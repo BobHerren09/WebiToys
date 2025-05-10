@@ -204,12 +204,13 @@ while ($row_dm = $result_dm->fetch_assoc()) {
           <tr>
               <th width="5%">ID</th>
               <th width="10%">Hình ảnh</th>
-              <th width="25%">Tên sản phẩm</th>
+              <th width="20%">Tên sản phẩm</th>
               <th width="15%">Danh mục</th>
               <th width="10%">Giá</th>
+              <th width="10%">Số lượng</th>
               <th width="10%">Nổi bật</th>
               <th width="10%">Trạng thái</th>
-              <th width="15%">Thao tác</th>
+              <th width="10%">Thao tác</th>
           </tr>
       </thead>
       <tbody>
@@ -227,6 +228,7 @@ while ($row_dm = $result_dm->fetch_assoc()) {
                       <td><?php echo $san_pham['ten_san_pham']; ?></td>
                       <td><?php echo $san_pham['ten_danh_muc']; ?></td>
                       <td><?php echo dinh_dang_tien($san_pham['gia']); ?></td>
+                      <td><?php echo $san_pham['so_luong']; ?></td>
                       <td>
                           <a href="index.php?trang=san-pham&hanh-dong=cap-nhat-noi-bat&id=<?php echo $san_pham['id']; ?>&noi-bat=<?php echo $san_pham['noi_bat'] ? 0 : 1; ?>" class="btn-trang-thai <?php echo $san_pham['noi_bat'] ? 'active' : ''; ?>">
                               <?php echo $san_pham['noi_bat'] ? 'Có' : 'Không'; ?>
@@ -310,4 +312,3 @@ while ($row_dm = $result_dm->fetch_assoc()) {
         </div>
     <?php endif; ?>
 </div>
-
