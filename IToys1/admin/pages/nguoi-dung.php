@@ -264,10 +264,10 @@ while ($row = $result->fetch_assoc()) {
 
 <div class="nguoi-dung-page">
   <div class="page-header">
-      <h1>Quản Lý Người Dùng</h1>
+      <h1>Quản Lý Khách Hàng</h1>
       <?php if ($hanh_dong != 'them' && $hanh_dong != 'sua'): ?>
           <button type="button" class="btn-them-moi" onclick="location.href='index.php?trang=nguoi-dung&hanh-dong=them'">
-              <i class="fas fa-plus"></i> Thêm người dùng mới
+              <i class="fas fa-plus"></i> Thêm khách hàng mới
           </button>
       <?php endif; ?>
   </div>
@@ -283,7 +283,7 @@ while ($row = $result->fetch_assoc()) {
   <?php if ($hanh_dong == 'them'): ?>
       <!-- Form thêm người dùng -->
       <div class="form-container">
-          <h2>Thêm Người Dùng Mới</h2>
+          <h2>Thêm Khách Hàng Mới</h2>
           <form method="POST" action="index.php?trang=nguoi-dung&hanh-dong=them">
               <div class="form-row">
                   <div class="form-group col-md-6">
@@ -331,7 +331,7 @@ while ($row = $result->fetch_assoc()) {
               
               <div class="form-actions">
                   <button type="submit" class="btn-luu">
-                      <i class="fas fa-save"></i> Lưu người dùng
+                      <i class="fas fa-save"></i> Lưu Khách Hàng
                   </button>
                   <a href="index.php?trang=nguoi-dung" class="btn-huy">Hủy</a>
               </div>
@@ -340,7 +340,7 @@ while ($row = $result->fetch_assoc()) {
   <?php elseif ($hanh_dong == 'sua' && $nguoi_dung_sua): ?>
       <!-- Form sửa người dùng -->
       <div class="form-container">
-          <h2>Sửa Thông Tin Người Dùng</h2>
+          <h2>Sửa Thông Tin Khách Hàng</h2>
           <form method="POST" action="index.php?trang=nguoi-dung&hanh-dong=sua">
               <input type="hidden" name="nguoi_dung_id" value="<?php echo $nguoi_dung_sua['id']; ?>">
               

@@ -41,6 +41,42 @@
 </footer>
 
 <div class="ban-quyen">
-    <p>&copy; <?php echo date('Y'); ?> BobDev. Tất cả quyền được bảo lưu.</p>
+    <p>&copy; <?php echo date('Y'); ?> Sinh viên Ngô Thành Đạt. Khóa luận tốt nghiệp VNUF.</p>
 </div>
 
+<style>
+/* Sửa lại CSS cho footer */
+.chan-trang {
+    background-color: #343a40;
+    color: white;
+    padding: 25px 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.ban-quyen {
+    background-color: #212529;
+    color: #adb5bd;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 14px;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .chan-trang {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .chan-trang {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

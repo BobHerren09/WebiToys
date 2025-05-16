@@ -100,7 +100,7 @@ if ($hanh_dong == 'xoa' && isset($_GET['id'])) {
 // Xu ly loc va tim kiem
 $tu_khoa = isset($_GET['tu_khoa']) ? $_GET['tu_khoa'] : '';
 $trang_thai_loc = isset($_GET['trang-thai']) ? (int) $_GET['trang-thai'] : -1;
-$trang = isset($_GET['trang']) ? (int) $_GET['trang'] : 1;
+$trang = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $gioi_han = 10;
 
 // Tao cau truy van
@@ -428,7 +428,7 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
 
               // Nut trang truoc
               if ($trang > 1) {
-                  echo '<a href="' . $url_co_so . '&trang=' . ($trang - 1) . '" class="trang-truoc">Trước</a>';
+                  echo '<a href="' . $url_co_so . '&page=' . ($trang - 1) . '" class="trang-truoc">Trước</a>';
               }
 
               // Cac trang
@@ -439,13 +439,13 @@ if ($hanh_dong == 'xem' && isset($_GET['id'])) {
                   if ($i == $trang) {
                       echo '<span class="trang-hien-tai">' . $i . '</span>';
                   } else {
-                      echo '<a href="' . $url_co_so . '&trang=' . $i . '">' . $i . '</a>';
+                      echo '<a href="' . $url_co_so . '&page=' . $i . '">' . $i . '</a>';
                   }
               }
 
               // Nut trang sau
               if ($trang < $tong_so_trang) {
-                  echo '<a href="' . $url_co_so . '&trang=' . ($trang + 1) . '" class="trang-sau">Sau</a>';
+                  echo '<a href="' . $url_co_so . '&page=' . ($trang + 1) . '" class="trang-sau">Sau</a>';
               }
               ?>
           </div>

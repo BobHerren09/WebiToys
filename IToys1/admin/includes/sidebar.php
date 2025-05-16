@@ -27,7 +27,7 @@
             </li>
             <li>
                 <a href="index.php?trang=nguoi-dung" class="<?php echo $trang == 'nguoi-dung' ? 'active' : ''; ?>">
-                    <i class="fas fa-users"></i> Người dùng
+                    <i class="fas fa-users"></i> Khách hàng
                 </a>
             </li>
             <li>

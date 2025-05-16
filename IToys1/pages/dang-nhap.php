@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Kiem tra neu da dang nhap thi chuyen huong ve trang chu
 if (da_dang_nhap()) {
     header("Location: index.php");
@@ -12,9 +12,18 @@ $email = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $mat_khau = $_POST['mat_khau'];
+    $ghi_nho = isset($_POST['ghi_nho']) ? true : false;
 
     // Kiem tra dang nhap
     if (dang_nhap($conn, $email, $mat_khau)) {
+        // Nếu chọn ghi nhớ đăng nhập, thiết lập cookie
+        if ($ghi_nho) {
+            // Thiết lập cookie với thời hạn 30 ngày
+            setcookie('ghi_nho_email', $email, time() + (86400 * 30), "/");
+            // Trong thực tế, bạn nên mã hóa thông tin và không lưu mật khẩu trong cookie
+            // Thay vào đó, lưu một token ngẫu nhiên và liên kết với người dùng trong cơ sở dữ liệu
+        }
+
         // Neu co trang can chuyen huong sau khi dang nhap
         if (isset($_SESSION['redirect_after_login'])) {
             $redirect = $_SESSION['redirect_after_login'];
@@ -28,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $thong_bao = "Email hoặc mật khẩu không chính xác!";
     }
+}
+
+// Kiểm tra nếu có cookie ghi nhớ đăng nhập
+if (isset($_COOKIE['ghi_nho_email'])) {
+    $email = $_COOKIE['ghi_nho_email'];
 }
 ?>
 
@@ -51,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="password" id="mat_khau" name="mat_khau" required>
                 </div>
                 
+                <div class="form-group ghi-nho-group">
+                    <input type="checkbox" id="ghi_nho" name="ghi_nho" <?php echo isset($_COOKIE['ghi_nho_email']) ? 'checked' : ''; ?>>
+                    <label for="ghi_nho" class="label-ghi-nho">Ghi nhớ đăng nhập</label>
+                </div>
+                
                 <div class="form-group">
                     <button type="submit" class="btn-dang-nhap">Đăng Nhập</button>
                 </div>
@@ -58,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             <div class="lien-ket-khac">
                 <p>Chưa có tài khoản? <a href="index.php?trang=dang-ky">Đăng ký ngay</a></p>
-                <p><a href="#">Quên mật khẩu?</a></p>
+                <p><a href="index.php?trang=quen-mat-khau">Quên mật khẩu?</a></p>
             </div>
         </div>
     </div>
@@ -111,6 +130,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     font-size: 14px;
 }
 
+.ghi-nho-group {
+    display: flex;
+    align-items: center;
+}
+
+.ghi-nho-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.label-ghi-nho {
+    display: inline;
+    font-weight: normal;
+}
+
 .btn-dang-nhap {
     width: 100%;
     padding: 12px;
@@ -142,4 +176,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     text-decoration: underline;
 }
 </style>
-
