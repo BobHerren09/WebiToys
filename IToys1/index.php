@@ -60,6 +60,12 @@ if (!file_exists($upload_dir)) {
                 case 'cam-on':
                     include_once("pages/cam-on.php");
                     break;
+                case 'quen-mat-khau':
+                    include_once("pages/quen-mat-khau.php");
+                    break;
+                case 'dat-lai-mat-khau':
+                    include_once("pages/dat-lai-mat-khau.php");
+                    break;
                 default:
                     include_once("pages/trang-chu.php");
                     break;
@@ -73,4 +79,3 @@ if (!file_exists($upload_dir)) {
     <script src="assets/js/main.js"></script>
 </body>
 </html>
-
